@@ -16,10 +16,9 @@
     "platforms": [
       "ios",
       "android"
-    ],
-    "plugin": "./app.plugin.js"
+    ]
   },
-  "homepage": "https://github.com/Jetbo/expo-nordic-dfu#readme",
+  "homepage": "https://github.com/getquip/expo-nordic-dfu#readme",
   "keywords": [
     "react-native",
     "dfu",
@@ -28,7 +27,7 @@
   ],
   "license": "MIT",
   "main": "build/index.js",
-  "name": "@getquip/react-native-nordic-dfu",
+  "name": "@getquip/expo-nordic-dfu",
   "peerDependencies": {
     "expo": "^52.0.0",
     "react": "^18.0.0",
@@ -55,6 +54,6 @@
     "test": "expo-module test"
   },
   "types": "build/index.d.ts",
-  "url": "https://github.com/getquip/react-native-nordic-dfu",
-  "version": "5.3.0"
+  "url": "https://github.com/getquip/expo-nordic-dfu",
+  "version": "0.0.1"
 }
