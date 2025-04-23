@@ -1,0 +1,60 @@
+{
+  "author": "getquip",
+  "bugs": {
+    "url": "https://github.com/getquip/expo-nordic-dfu/issues"
+  },
+  "dependencies": {},
+  "description": "Nordic DFU for Expo",
+  "devDependencies": {
+    "@types/react": "~18.3.12",
+    "expo": "~52.0.0",
+    "expo-module-scripts": "^4.0.4",
+    "prettier": "^2.3.2",
+    "react-native": "0.76.0"
+  },
+  "expo-module": {
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "plugin": "./app.plugin.js"
+  },
+  "homepage": "https://github.com/Jetbo/expo-nordic-dfu#readme",
+  "keywords": [
+    "react-native",
+    "dfu",
+    "nordic",
+    "expo"
+  ],
+  "license": "MIT",
+  "main": "build/index.js",
+  "name": "@getquip/react-native-nordic-dfu",
+  "peerDependencies": {
+    "expo": "^52.0.0",
+    "react": "^18.0.0",
+    "react-native": "^0.76.0"
+  },
+  "react-native": {
+    "codegenConfig": {
+      "jsSrcsDir": "src",
+      "libraryName": "ExpoNordicDfu",
+      "name": "ExpoNordicDfu",
+      "type": "modules"
+    }
+  },
+  "repository": "getquip/expo-nordic-dfu",
+  "scripts": {
+    "build": "expo-module build",
+    "clean": "expo-module clean",
+    "expo-module": "expo-module",
+    "lint": "expo-module lint",
+    "open:android": "open -a \"Android Studio\" example/android",
+    "open:ios": "xed example/ios",
+    "prepare": "expo-module prepare",
+    "prepublishOnly": "expo-module prepublishOnly",
+    "test": "expo-module test"
+  },
+  "types": "build/index.d.ts",
+  "url": "https://github.com/getquip/react-native-nordic-dfu",
+  "version": "5.3.0"
+}

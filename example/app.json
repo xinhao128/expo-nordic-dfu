@@ -1,0 +1,50 @@
+{
+  "expo": {
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff",
+        "foregroundImage": "./assets/adaptive-icon.png"
+      },
+      "permissions": [
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE",
+      ],
+      "package": "expo.modules.nordicdfu.example"
+    },
+    "icon": "./assets/icon.png",
+    "ios": {
+      "bundleIdentifier": "expo.modules.nordicdfu.example",
+      "supportsTablet": true
+    },
+    "name": "expo-nordic-dfu-example",
+    "newArchEnabled": true,
+    "orientation": "portrait",
+    "plugins": [
+      [
+        "expo-document-picker",
+        {
+          "iCloudContainerEnvironment": "Production"
+        }
+      ],
+      [
+        "react-native-ble-manager",
+        {
+          "bluetoothAlwaysPermission": "to connect to to Bluetooth devices",
+          "isBleRequired": true,
+          "neverForLocation": true
+        }
+      ]
+    ],
+    "slug": "expo-nordic-dfu-example",
+    "splash": {
+      "backgroundColor": "#ffffff",
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain"
+    },
+    "userInterfaceStyle": "light",
+    "version": "1.0.0",
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "expo-nordic-dfu": ["../src/index"],
+      "expo-nordic-dfu/*": ["../src/*"]
+    }
+  }
+}

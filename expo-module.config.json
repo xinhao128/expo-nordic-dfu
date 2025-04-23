@@ -1,0 +1,16 @@
+{
+  "platforms": [
+    "apple",
+    "android"
+  ],
+  "apple": {
+    "modules": [
+      "ExpoNordicDfuModule"
+    ]
+  },
+  "android": {
+    "modules": [
+      "com.getquip.nordic.ExpoNordicDfuModule"
+    ]
+  }
+}
