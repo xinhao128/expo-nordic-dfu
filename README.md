@@ -14,3 +14,7 @@ Our intention is to maintain this code for modern Expo projects only. We will no
 - iOS 17 or 18
 - Expo SDK 52
 - React Native Bridgeless (new architecture) enabled
+
+## Contributing
+
+Before we can accept a pull request from you, you'll need to read and agree to our [Contributor License Agreement (CLA)](https://github.com/getquip/expo-nordic-dfu/blob/main/CONTRIBUTING.md). 
