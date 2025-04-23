@@ -10,6 +10,8 @@ Our intention is to maintain this code for modern Expo projects only. We will no
 
 ## Requirements
 
+- React Native project already connected to the device and in the CBCentralManager cache
+- Nordic zip firmware file
 - Android 14 or 15
 - iOS 17 or 18
 - Expo SDK 52

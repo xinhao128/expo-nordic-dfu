@@ -54,10 +54,6 @@ class ExpoNordicDfuModule : Module() {
                 setZip(uri.toUri())
                 createDfuNotificationChannel(context)
                 setKeepBond(false)
-                // If you want to have experimental buttonless DFU feature (DFU from SDK 12.x only!) supported call
-                // but be aware of this: https://devzone.nordicsemi.com/question/100609/sdk-12-bootloader-erased-after-programming/
-                // and other issues related to this experimental service.
-                setUnsafeExperimentalButtonlessServiceInSecureDfuEnabled(true)
                 // The device name is not required
                 name?.let { setDeviceName(it) }
                 // For DFU bootloaders from SDK 15 and 16 it may be required to add a delay before sending each
