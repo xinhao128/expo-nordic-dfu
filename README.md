@@ -1,5 +1,7 @@
 # Expo Nordic DFU
 
+*Note*: First release is not out yet!
+
 This project was highly inspired by the original React Native project at [Pilloxa/react-native-nordic-dfu](https://github.com/Pilloxa/react-native-nordic-dfu). We continued the work so it functions with modern [Expo](http://expo.dev/) projects that use [Expo Modules](https://docs.expo.dev/modules/overview/).
 
 This module allows you to perform a Device Firmware Update (DFU) for Nordic Semiconductors on Expo React Native bridgeless projects. It wraps the official libraries at [NordicSemiconductor/Android-DFU-Library](https://github.com/NordicSemiconductor/Android-DFU-Library) and [NordicSemiconductor/IOS-DFU-Library](https://github.com/NordicSemiconductor/IOS-DFU-Library).
