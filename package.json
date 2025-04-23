@@ -3,14 +3,13 @@
   "bugs": {
     "url": "https://github.com/getquip/expo-nordic-dfu/issues"
   },
-  "dependencies": {},
   "description": "Nordic DFU for Expo",
   "devDependencies": {
     "@types/react": "~18.3.12",
-    "expo": "~52.0.0",
-    "expo-module-scripts": "^4.0.4",
-    "prettier": "^2.3.2",
-    "react-native": "0.76.0"
+    "expo": "~52.0.46",
+    "expo-module-scripts": "^4.0.5",
+    "prettier": "^2.8.8",
+    "react-native": "^0.76.9"
   },
   "expo-module": {
     "platforms": [
