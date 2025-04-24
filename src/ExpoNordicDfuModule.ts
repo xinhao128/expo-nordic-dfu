@@ -19,22 +19,22 @@ declare class ExpoNordicDfuModule extends NativeModule<ExpoSettingsModuleEvents>
   abortIosDfu(value: string): Promise<boolean>;
 }
 
-const NativeDfu = requireNativeModule<ExpoNordicDfuModule>('ExpoNordicDfuModule');
+const DfuModule = requireNativeModule<ExpoNordicDfuModule>('ExpoNordicDfuModule');
 
 class CrossplatformWrapper {
-  constructor(private nativeModule: ExpoNordicDfuModule) {}
+  constructor(private dfuModule: ExpoNordicDfuModule) {}
 
   get module() {
-    return this.nativeModule;
+    return this.dfuModule;
   }
 
   async startDfu(params: StartDFUParams): Promise<void> {
     if (Platform.OS === 'ios') {
-      return await this.nativeModule.startIosDfu(params.deviceAddress, params.file, params.prepareDataObjectDelay);
+      return await this.dfuModule.startIosDfu(params.deviceAddress, params.file, params.prepareDataObjectDelay);
     } else {
-      return await this.nativeModule.startAndroidDfu(params.deviceAddress, params.file, params.android?.deviceName, params.prepareDataObjectDelay, params.android?.retries);
+      return await this.dfuModule.startAndroidDfu(params.deviceAddress, params.file, params.android?.deviceName, params.prepareDataObjectDelay, params.android?.retries);
     }
   }
 };
 
-export default new CrossplatformWrapper(NativeDfu);
+export default new CrossplatformWrapper(DfuModule);

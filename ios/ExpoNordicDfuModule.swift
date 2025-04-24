@@ -2,7 +2,7 @@ import ExpoModulesCore
 import NordicDFU
 import os
 
-public class ExpoNordicDfuModule: Module, ObservableObject, DFUProgressDelegate, DFUServiceDelegate, LoggerDelegate {
+public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegate, LoggerDelegate {
     private static let logger = Logger(subsystem: "com.getquip.nordic", category: "DFU")
 
     private var controller: DFUServiceController?
@@ -92,7 +92,7 @@ public class ExpoNordicDfuModule: Module, ObservableObject, DFUProgressDelegate,
         }()
         
         sendEvent("DFUStateChanged", [
-            "deviceAddress": self.deviceAddress,
+            "deviceAddress": deviceAddress,
             "state": stateName
         ])
 
@@ -103,7 +103,7 @@ public class ExpoNordicDfuModule: Module, ObservableObject, DFUProgressDelegate,
         }
         if state == .completed {
             self.controller = nil
-            self.currentPromise?.resolve(["deviceAddress": self.deviceAddress])
+            self.currentPromise?.resolve(["deviceAddress": deviceAddress])
             self.currentPromise = nil
         }
     }
@@ -112,7 +112,7 @@ public class ExpoNordicDfuModule: Module, ObservableObject, DFUProgressDelegate,
         guard let deviceAddress = self.deviceAddress else { return }
 
         sendEvent("DFUStateChanged", [
-            "deviceAddress": self.deviceAddress,
+            "deviceAddress": deviceAddress,
             "state": "DFU_FAILED"
         ])
         let combinedMessage = "Error: \(error.rawValue), Error Type: \(String(describing: error)), Message: \(message)"
@@ -128,9 +128,19 @@ public class ExpoNordicDfuModule: Module, ObservableObject, DFUProgressDelegate,
       avgSpeedBytesPerSecond: Double
     ) {
         guard let deviceAddress = self.deviceAddress else { return }
+        
+        let logData: [String: String] = [
+            "deviceAddress": deviceAddress,
+            "percent": String(progress),
+            "speed": String(currentSpeedBytesPerSecond),
+            "avgSpeed": String(avgSpeedBytesPerSecond),
+            "currentPart": String(part),
+            "totalParts": String(totalParts),
+        ]
+        Self.logger.info("DFU Progress \(logData)")
 
         sendEvent("DFUProgress", [
-            "deviceAddress": self.deviceAddress,
+            "deviceAddress": deviceAddress,
             "percent": progress,
             "speed": currentSpeedBytesPerSecond,
             "avgSpeed": avgSpeedBytesPerSecond,

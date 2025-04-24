@@ -61,7 +61,7 @@ export default function App() {
   const [firmwareFile, setFirmwareFile] = useState<FirmwareFileType | false>()
   const [selectedColor, setSelectedColor] = useState<string>(SELECTION_COLORS.none)
   const [firmwareProgress, setFirmwareProgress] = useState<ProgressType | undefined>(undefined)
-  const [foundNone, setFoundNone] = useState<boolean>(false)
+  const [isScanning, setIsScanning] = useState<boolean | undefined>(undefined)
 
   const processScanning = (peripheral: Peripheral) => {
     setPeripherals((peripherals) => {
@@ -69,16 +69,10 @@ export default function App() {
     })
   }
 
-  const processStopScanning = () => {
-    if (peripherals.length === 0) {
-      setFoundNone(true)
-    }
-  }
-
   useEffect(() => {
     void bleManagerInitialize()
     const discoverListener = BleManager.onDiscoverPeripheral(processScanning)
-    const onStopScanListener = BleManager.onStopScan(processStopScanning)
+    const onStopScanListener = BleManager.onStopScan(() => setIsScanning(false))
 
     return () => {
       discoverListener.remove();
@@ -132,13 +126,14 @@ export default function App() {
     setPeripheral(undefined)
     setFirmwareProgress(undefined)
     setFirmwareFile(undefined)
-    setFoundNone(false)
+    setIsScanning(undefined)
   }
 
   const scan = async () => {
     await reset(peripheral)
     try {
       await BleManager.scan(SERVICE_UUIDS, 5, false)
+      setIsScanning(true)
     } catch (error) {
       await BleManager.stopScan()
       throw error
@@ -245,8 +240,8 @@ export default function App() {
     } catch (error) {
       console.error(error)
     } finally {
-      ExpoNordicDfu.module.removeAllListeners('DFUProgress')
-      ExpoNordicDfu.module.removeAllListeners('DFUStateChanged')
+      // ExpoNordicDfu.module.removeAllListeners('DFUProgress')
+      // ExpoNordicDfu.module.removeAllListeners('DFUStateChanged')
     }
   }
 
@@ -256,10 +251,10 @@ export default function App() {
         <ScrollView contentContainerStyle={{ minHeight: '100%', width: '100%' }}>
           <View style={styles.view}>
             <Text variant="headlineLarge">Nordic DFU Example App</Text>
-            <Button disabled={firmwareDisableButtons} mode="contained" onPress={scan}>
+            <Button disabled={firmwareDisableButtons || isScanning} mode="contained" onPress={scan}>
               Scan for Devices
             </Button>
-            {foundNone && (<Text>No devices found</Text>)}
+            {isScanning === false && peripherals.length === 0 && <Text>No devices found</Text>}
             {peripherals.length > 0 && <Text>Click one of the following devices to connect and pair:</Text>}
             {[...peripherals].map((peripheral) => (
               <TouchableOpacity
