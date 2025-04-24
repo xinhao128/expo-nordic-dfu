@@ -31,8 +31,8 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
             promise: Promise
         ) in
             guard self.controller == nil else {
-              promise.reject("dfu_in_progress", "A DFU process is already running")
-              return
+                promise.reject("dfu_in_progress", "A DFU process is already running")
+                return
             }
 
             self.currentPromise = promise
@@ -43,7 +43,9 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
                 self.currentPromise = nil
                 return
             }
-            
+
+            Self.logger.info("Starting DFU on device \(uuid)")
+
             let path = fileUri.replacingOccurrences(of: "file://", with: "")
             let url = URL(fileURLWithPath: path)
             let firmware = try DFUFirmware(urlToZipFile: url)
@@ -73,7 +75,7 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
             }
         }
     }
-    
+
     public func dfuStateDidChange(to state: NordicDFU.DFUState) {
         guard let deviceAddress = self.deviceAddress else { return }
 
@@ -90,7 +92,7 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
             default: return "UNKNOWN_STATE"
             }
         }()
-        
+
         sendEvent("DFUStateChanged", [
             "deviceAddress": deviceAddress,
             "state": stateName
@@ -107,7 +109,7 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
             self.currentPromise = nil
         }
     }
-    
+
     public func dfuError(_ error: NordicDFU.DFUError, didOccurWithMessage message: String) {
         guard let deviceAddress = self.deviceAddress else { return }
 
@@ -119,16 +121,16 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
         self.currentPromise?.reject("\(error.rawValue)", combinedMessage)
         self.currentPromise = nil
     }
-    
+
     public func dfuProgressDidChange(
-      for part: Int,
-      outOf totalParts: Int,
-      to progress: Int,
-      currentSpeedBytesPerSecond: Double,
-      avgSpeedBytesPerSecond: Double
+        for part: Int,
+        outOf totalParts: Int,
+        to progress: Int,
+        currentSpeedBytesPerSecond: Double,
+        avgSpeedBytesPerSecond: Double
     ) {
         guard let deviceAddress = self.deviceAddress else { return }
-        
+
         let logData: [String: String] = [
             "deviceAddress": deviceAddress,
             "percent": String(progress),
@@ -148,7 +150,7 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
             "totalParts": totalParts,
         ])
     }
-    
+
     public func logWith(_ level: LogLevel, message: String) {
         switch level {
         case .debug, .verbose:
