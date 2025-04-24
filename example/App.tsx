@@ -104,7 +104,7 @@ export default function App() {
     })
   }
 
-  const firmwareDisableButtons = firmwareProgress !== undefined && firmwareProgress.state !== 'DEVICE_DISCONNECTED'
+  const firmwareDisableButtons = firmwareProgress !== undefined && firmwareProgress.state !== 'DEVICE_DISCONNECTED' && firmwareProgress.state !== 'DFU_FAILED'
 
   const backgroundColor = (selected: Peripheral) => {
     const isSelected = selected.id === peripheral?.id
@@ -304,7 +304,7 @@ export default function App() {
             {peripheral && selectedColor === SELECTION_COLORS.connected && (
               <Button
                 disabled={firmwareDisableButtons}
-                mode="contained"
+                mode="contained-tonal"
                 onPress={() => {
                   reset(peripheral)
                 }}
