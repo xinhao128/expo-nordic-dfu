@@ -26,9 +26,8 @@ public class ExpoNordicDfuModule: Module, ObservableObject, DFUProgressDelegate,
 
         AsyncFunction("startIosDfu") { (
             deviceAddress: String,
-            deviceName: String?,
-            filePath: String,
-            prepareDataObjectDelay: Double,
+            fileUri: String,
+            prepareDataObjectDelay: Double?,
             promise: Promise
         ) in
             guard self.controller == nil else {
@@ -45,7 +44,8 @@ public class ExpoNordicDfuModule: Module, ObservableObject, DFUProgressDelegate,
                 return
             }
             
-            let url = URL(fileURLWithPath: filePath)
+            let path = fileUri.replacingOccurrences(of: "file://", with: "")
+            let url = URL(fileURLWithPath: path)
             let firmware = try DFUFirmware(urlToZipFile: url)
             let initiator = DFUServiceInitiator().with(firmware: firmware)
             initiator.logger = self
@@ -58,7 +58,7 @@ public class ExpoNordicDfuModule: Module, ObservableObject, DFUProgressDelegate,
             // It has been found, that a delay of at least 0.3 sec reduces the risk of packet lose (the bootloader needs some time to prepare flash memory) on DFU bootloader from SDK 15, 16, and 17.
             // The delay does not have to be longer than 0.4 sec, as according to performed tests, such such delay is sufficient.
             // The recommended delay is from 0.3 to 0.4 second if your DFU bootloader is from SDK 15, 16 or 17. Older bootloaders do not need this delay.
-            initiator.dataObjectPreparationDelay = TimeInterval(prepareDataObjectDelay)
+            prepareDataObjectDelay.map { initiator.dataObjectPreparationDelay = TimeInterval($0) }
             self.controller = initiator.start(targetWithIdentifier: uuid)
         }
 

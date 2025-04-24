@@ -61,6 +61,7 @@ export default function App() {
   const [firmwareFile, setFirmwareFile] = useState<FirmwareFileType | false>()
   const [selectedColor, setSelectedColor] = useState<string>(SELECTION_COLORS.none)
   const [firmwareProgress, setFirmwareProgress] = useState<ProgressType | undefined>(undefined)
+  const [foundNone, setFoundNone] = useState<boolean>(false)
 
   const processScanning = (peripheral: Peripheral) => {
     setPeripherals((peripherals) => {
@@ -68,12 +69,20 @@ export default function App() {
     })
   }
 
+  const processStopScanning = () => {
+    if (peripherals.length === 0) {
+      setFoundNone(true)
+    }
+  }
+
   useEffect(() => {
     void bleManagerInitialize()
     const discoverListener = BleManager.onDiscoverPeripheral(processScanning)
+    const onStopScanListener = BleManager.onStopScan(processStopScanning)
 
     return () => {
       discoverListener.remove();
+      onStopScanListener.remove();
     };
   }, [])
 
@@ -123,12 +132,13 @@ export default function App() {
     setPeripheral(undefined)
     setFirmwareProgress(undefined)
     setFirmwareFile(undefined)
+    setFoundNone(false)
   }
 
   const scan = async () => {
     await reset(peripheral)
     try {
-      await BleManager.scan(SERVICE_UUIDS, 10, false)
+      await BleManager.scan(SERVICE_UUIDS, 5, false)
     } catch (error) {
       await BleManager.stopScan()
       throw error
@@ -215,24 +225,28 @@ export default function App() {
 
   const startDFU = async (peripheral: Peripheral, firmwareFile: FirmwareFileType) => {
     try {
-      ExpoNordicDfu.addListener('DFUProgress', (progress) => {
+      ExpoNordicDfu.module.addListener('DFUProgress', (progress) => {
         console.info('DFUProgress:', progress)
         setFirmwareProgress({ ...progress, state: 'Updating...' })
       })
-      ExpoNordicDfu.addListener('DFUStateChanged', ({ state }) => {
+      ExpoNordicDfu.module.addListener('DFUStateChanged', ({ state }) => {
         console.info('DFUStateChanged:', state)
         setFirmwareProgress({ state, ...firmwareProgress })
       })
-      await ExpoNordicDfu.startAndroidDfu(
-        peripheral.id,
-        firmwareFile.uri,
-        peripheral.name,
-      )
+      await ExpoNordicDfu.startDfu({
+        deviceAddress: peripheral.id,
+        file: firmwareFile.uri,
+        prepareDataObjectDelay: 0,
+        android: {
+          deviceName: peripheral.name,
+          retries: 1,
+        }
+      })
     } catch (error) {
       console.error(error)
     } finally {
-      ExpoNordicDfu.removeAllListeners('DFUProgress')
-      ExpoNordicDfu.removeAllListeners('DFUStateChanged')
+      ExpoNordicDfu.module.removeAllListeners('DFUProgress')
+      ExpoNordicDfu.module.removeAllListeners('DFUStateChanged')
     }
   }
 
@@ -245,6 +259,7 @@ export default function App() {
             <Button disabled={firmwareDisableButtons} mode="contained" onPress={scan}>
               Scan for Devices
             </Button>
+            {foundNone && (<Text>No devices found</Text>)}
             {peripherals.length > 0 && <Text>Click one of the following devices to connect and pair:</Text>}
             {[...peripherals].map((peripheral) => (
               <TouchableOpacity

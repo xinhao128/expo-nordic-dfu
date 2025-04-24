@@ -17,5 +17,13 @@ export type DFUProgressPayload = {
   totalParts: number;
 }
 
-export type DFUStartParams = {}
+export type StartDFUParams = {
+  deviceAddress: string;
+  file: string;
+  prepareDataObjectDelay?: number;
+  android?: {
+    deviceName?: string;
+    retries?: number;
+  }
+}
 

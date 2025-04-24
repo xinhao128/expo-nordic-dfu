@@ -1,5 +1,6 @@
 import { NativeModule, requireNativeModule } from 'expo';
-import { ExpoSettingsModuleEvents } from './ExpoNordicDfu.types';
+import { ExpoSettingsModuleEvents, StartDFUParams } from './ExpoNordicDfu.types';
+import { Platform } from 'react-native';
 
 declare class ExpoNordicDfuModule extends NativeModule<ExpoSettingsModuleEvents> {
   startAndroidDfu(
@@ -10,7 +11,30 @@ declare class ExpoNordicDfuModule extends NativeModule<ExpoSettingsModuleEvents>
     retries?: number,
   ): Promise<void>;
   abortAndroidDfu(value: string): Promise<boolean>;
+  startIosDfu(
+    deviceAddress: string,
+    fileUri: string,
+    prepareDataObjectDelay?: number,
+  ): Promise<void>;
+  abortIosDfu(value: string): Promise<boolean>;
 }
 
-// This call loads the native module object from the JSI.
-export default requireNativeModule<ExpoNordicDfuModule>('ExpoNordicDfu');
+const NativeDfu = requireNativeModule<ExpoNordicDfuModule>('ExpoNordicDfuModule');
+
+class CrossplatformWrapper {
+  constructor(private nativeModule: ExpoNordicDfuModule) {}
+
+  get module() {
+    return this.nativeModule;
+  }
+
+  async startDfu(params: StartDFUParams): Promise<void> {
+    if (Platform.OS === 'ios') {
+      return await this.nativeModule.startIosDfu(params.deviceAddress, params.file, params.prepareDataObjectDelay);
+    } else {
+      return await this.nativeModule.startAndroidDfu(params.deviceAddress, params.file, params.android?.deviceName, params.prepareDataObjectDelay, params.android?.retries);
+    }
+  }
+};
+
+export default new CrossplatformWrapper(NativeDfu);

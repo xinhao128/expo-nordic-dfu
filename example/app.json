@@ -8,13 +8,17 @@
       "permissions": [
         "android.permission.FOREGROUND_SERVICE",
         "android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE",
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_ADMIN",
+        "android.permission.BLUETOOTH_CONNECT"
       ],
       "package": "expo.modules.nordicdfu.example"
     },
     "icon": "./assets/icon.png",
     "ios": {
       "bundleIdentifier": "expo.modules.nordicdfu.example",
-      "supportsTablet": true
+      "supportsTablet": true,
+      "appleTeamId": "UVG7KPQ5XS"
     },
     "name": "expo-nordic-dfu-example",
     "newArchEnabled": true,

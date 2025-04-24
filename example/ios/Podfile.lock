@@ -38,7 +38,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - ExpoNordicDfu (5.3.0):
+  - ExpoNordicDfu (0.0.1):
     - ExpoModulesCore
     - iOSDFULibrary (~> 4.15.3)
   - fast_float (6.1.4)
@@ -1871,7 +1871,7 @@ SPEC CHECKSUMS:
   ExpoFont: 773955186469acc5108ff569712a2d243857475f
   ExpoKeepAwake: 2a5f15dd4964cba8002c9a36676319a3394c85c7
   ExpoModulesCore: dd965804a882f1dbb6036fceea4d912461aeaa0d
-  ExpoNordicDfu: c47abaa9ec5119b99abf2244bc9b910e0a3ae05d
+  ExpoNordicDfu: 243cd165a79e5ed29644b0ba6206e2031fa750a4
   fast_float: 06eeec4fe712a76acc9376682e4808b05ce978b6
   FBLazyVector: 7605ea4810e0e10ae4815292433c09bf4324ba45
   fmt: 01b82d4ca6470831d1cc0852a1af644be019e8f6
