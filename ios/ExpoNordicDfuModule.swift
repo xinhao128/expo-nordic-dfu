@@ -43,7 +43,7 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
 
             guard let uuid = UUID(uuidString: deviceAddress) else {
                 self.currentPromise?.reject("invalid_device_address", "Device address is invalid")
-                self.currentPromise = nil
+                resetState()
                 return
             }
 
@@ -108,14 +108,12 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
         ])
 
         if state == .aborted {
-            self.controller = nil
-            self.currentPromise?.reject("dfu_aborted", "DFU was aborted")
-            self.currentPromise = nil
+            self.currentPromise?.resolve("DFU was aborted")
+            resetState()
         }
         if state == .completed {
-            self.controller = nil
             self.currentPromise?.resolve(["deviceAddress": deviceAddress])
-            self.currentPromise = nil
+            resetState()
         }
     }
 
@@ -126,10 +124,9 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
             "deviceAddress": deviceAddress,
             "state": "DFU_FAILED"
         ])
-        self.controller = nil
         let combinedMessage = "Error: \(error.rawValue), Error Type: \(String(describing: error)), Message: \(message)"
         self.currentPromise?.reject("\(error.rawValue)", combinedMessage)
-        self.currentPromise = nil
+        resetState()
     }
 
     public func dfuProgressDidChange(
@@ -139,20 +136,10 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
         currentSpeedBytesPerSecond: Double,
         avgSpeedBytesPerSecond: Double
     ) {
-        let logData: [String: String] = [
-            "deviceAddress": self.deviceAddress ?? "",
-            "percent": String(progress),
-            "speed": String(currentSpeedBytesPerSecond),
-            "avgSpeed": String(avgSpeedBytesPerSecond),
-            "currentPart": String(part),
-            "totalParts": String(totalParts),
-        ]
-        Self.logger.info("DFU Progress \(logData)")
-
-//        guard let deviceAddress = self.deviceAddress else { return }
+        guard let deviceAddress = self.deviceAddress else { return }
 
         sendEvent("DFUProgress", [
-            "deviceAddress": self.deviceAddress ?? "",
+            "deviceAddress": deviceAddress,
             "percent": progress,
             "speed": currentSpeedBytesPerSecond,
             "avgSpeed": avgSpeedBytesPerSecond,
@@ -172,5 +159,10 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
         case .error:
             Self.logger.error("\(message, privacy: .public)")
         }
+    }
+    
+    private func resetState() {
+        self.currentPromise = nil
+        self.controller = nil
     }
 }

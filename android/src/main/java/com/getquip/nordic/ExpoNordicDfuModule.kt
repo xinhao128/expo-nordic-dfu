@@ -51,12 +51,11 @@ class ExpoNordicDfuModule : Module() {
             restoreBond: Boolean?,
             promise: Promise ->
 
-            context = requireNotNull(appContext.reactContext)
             currentPromise = promise
             if (controller !== null) {
                 currentPromise?.reject("dfu_in_progress", "A DFU process is already running", null)
             } else {
-
+                context = requireNotNull(appContext.reactContext)
                 val starter = DfuServiceInitiator(deviceAddress).apply {
                     setZip(fileUri.toUri())
                     createDfuNotificationChannel(context)
@@ -151,17 +150,16 @@ class ExpoNordicDfuModule : Module() {
             emitState("DEVICE_DISCONNECTED", deviceAddress)
 
         override fun onDfuCompleted(deviceAddress: String) {
-            currentPromise?.resolve(mapOf("deviceAddress" to deviceAddress))
             emitState("DFU_COMPLETED", deviceAddress)
-            cleanUpNotifications()
-            currentPromise = null
+            currentPromise?.resolve(mapOf("deviceAddress" to deviceAddress))
+            resetState()
         }
 
         override fun onDfuAborted(deviceAddress: String) {
             emitState("DFU_ABORTED", deviceAddress)
-            currentPromise?.reject("dfu_aborted", "DFU was aborted", null)
-            cleanUpNotifications()
-            currentPromise = null
+            currentPromise?.resolve("DFU was aborted")
+            resetState()
+
         }
 
         override fun onError(
@@ -173,9 +171,14 @@ class ExpoNordicDfuModule : Module() {
             emitState("DFU_FAILED", deviceAddress)
             val combinedMessage = "Error: $error, Error Type: $errorType, Message: $message"
             currentPromise?.reject(error.toString(), combinedMessage, null)
-            cleanUpNotifications()
-            currentPromise = null
+            resetState()
         }
+    }
+
+    private fun resetState() {
+        currentPromise = null
+        controller = null
+        cleanUpNotifications()
     }
 
     private fun cleanUpNotifications() {

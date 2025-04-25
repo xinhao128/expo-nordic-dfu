@@ -248,12 +248,17 @@ export default function App() {
 
   const abortDFU = async () => {
     try {
-      await ExpoNordicDfu.abortDfu()
+      const aborted = await ExpoNordicDfu.abortDfu()
+      if (aborted) {
+        console.info('DFU aborted')
+        setFirmwareProgress({ state: 'DFU_ABORTED' })
+        ExpoNordicDfu.module.removeAllListeners('DFUProgress')
+        ExpoNordicDfu.module.removeAllListeners('DFUStateChanged')
+      } else {
+        console.error('DFU abort failed!!')
+      }
     } catch (error) {
       console.error(error)
-    } finally {
-      ExpoNordicDfu.module.removeAllListeners('DFUProgress')
-      ExpoNordicDfu.module.removeAllListeners('DFUStateChanged')
     }
   }
 
@@ -302,9 +307,8 @@ export default function App() {
                 <Text>DFU Current Speed: {firmwareProgress.speed}</Text>
                 <Text>DFU Average Speed: {firmwareProgress.avgSpeed}</Text>
               </View>)}
-            {peripheral && selectedColor === SELECTION_COLORS.connected && firmwareFile && (
+            {peripheral && selectedColor === SELECTION_COLORS.connected && firmwareFile && !firmwareDisableButtons && (
               <Button
-                disabled={firmwareDisableButtons}
                 mode="contained"
                 onPress={() => {
                   startDFU(peripheral, firmwareFile)
@@ -322,7 +326,7 @@ export default function App() {
               >
                 Abort DFU
               </Button>
-    )}
+          )}
             {peripheral && selectedColor === SELECTION_COLORS.connected && (
               <Button
                 disabled={firmwareDisableButtons}

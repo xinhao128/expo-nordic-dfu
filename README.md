@@ -18,6 +18,31 @@ This project does not provide an interface for scanning/connecting devices via B
 - Expo SDK 52
 - React Native Bridgeless (new architecture) enabled
 
+## Usage
+
+Please checkout the [example app](example)!
+
+### Bluetooth permissions
+
+You need the various Bluetooth permission enabled on Expo project. If you use a Bluetooth management library like [react-native-ble-manager](https://github.com/innoveit/react-native-ble-manager), this might be done for you. For android, you also need Foreground services enabled for the DFU process.
+
+```typescript
+// Expo app.json
+
+// Android
+expo.android.permissions: [
+  "android.permission.FOREGROUND_SERVICE",
+  "android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE",
+  "android.permission.BLUETOOTH",
+  "android.permission.BLUETOOTH_ADMIN",
+  "android.permission.BLUETOOTH_CONNECT"
+]
+
+// iOS
+
+```
+
+
 ## Contributing
 
 Before we can accept a pull request from you, you'll need to read and agree to our [Contributor License Agreement (CLA)](https://github.com/getquip/expo-nordic-dfu/blob/main/CONTRIBUTING.md).
