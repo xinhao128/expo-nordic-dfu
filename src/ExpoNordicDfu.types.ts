@@ -26,8 +26,9 @@ export type StartDFUParams = {
     deviceName?: string;
     keepBond?: boolean;
     numberOfRetries?: number;
-    rebootTime?: number;
-    restoreBond?: boolean;
+    // See android/src/main/java/com/getquip/nordic/ExpoNordicDfuModule.kt
+    // rebootTime?: number;
+    // restoreBond?: boolean;
   }
   ios?: {
     connectionTimeout?: number,

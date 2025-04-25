@@ -54,8 +54,9 @@ class CrossplatformWrapper {
         params.android?.numberOfRetries,
         params.packetReceiptNotificationParameter,
         params.prepareDataObjectDelay,
-        params.android?.rebootTime,
-        params.android?.restoreBond,
+        // See android/src/main/java/com/getquip/nordic/ExpoNordicDfuModule.kt
+        // params.android?.rebootTime,
+        // params.android?.restoreBond,
       );
     }
   }

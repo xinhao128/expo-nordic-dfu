@@ -47,8 +47,12 @@ class ExpoNordicDfuModule : Module() {
             numberOfRetries: Int?,
             packetReceiptNotificationParameter: Int?,
             prepareDataObjectDelay: Long?,
-            rebootTime: Long?,
-            restoreBond: Boolean?,
+            // ---------------------
+            // AsyncFunction only supports a max of 7 custom args + a promise!
+            // TODO: Consider passing a JSON string and then unpacking
+            // ---------------------
+            // rebootTime: Long?,
+            // restoreBond: Boolean?,
             promise: Promise ->
 
             currentPromise = promise
@@ -79,10 +83,10 @@ class ExpoNordicDfuModule : Module() {
                     // automatic switch to PRN = 1, making the DFU very slow (but reliable).
                     prepareDataObjectDelay?.let { setPrepareDataObjectDelay(it) }
                     // Sets the time required by the device to reboot.
-                    rebootTime?.let { setRebootTime(it) }
+                    // rebootTime?.let { setRebootTime(it) }
                     // Sets whether a new bond should be created after the DFU is complete.
                     // The old bond information will be removed before.
-                    restoreBond?.let { setRestoreBond(it) }
+                    // restoreBond?.let { setRestoreBond(it) }
                     numberOfRetries?.let { setNumberOfRetries(it) }
                 }
                 controller = starter.start(context, DfuService::class.java)
