@@ -40,28 +40,48 @@ class ExpoNordicDfuModule : Module() {
         }
 
         AsyncFunction("startAndroidDfu") {
-            address: String,
-            uri: String,
-            name: String?,
+            deviceAddress: String,
+            fileUri: String,
+            deviceName: String?,
+            keepBond: Boolean?,
+            numberOfRetries: Int?,
+            packetReceiptNotificationParameter: Int?,
             prepareDataObjectDelay: Long?,
-            retries: Int?,
+            rebootTime: Long?,
+            restoreBond: Boolean?,
             promise: Promise ->
 
             context = requireNotNull(appContext.reactContext)
             currentPromise = promise
 
-            val starter = DfuServiceInitiator(address).apply {
-                setZip(uri.toUri())
+            val starter = DfuServiceInitiator(deviceAddress).apply {
+                setZip(fileUri.toUri())
                 createDfuNotificationChannel(context)
-                setKeepBond(false)
                 // The device name is not required
-                name?.let { setDeviceName(it) }
+                deviceName?.let { setDeviceName(it) }
+                // Sets whether the bond information should be preserver after flashing new application.
+                keepBond?.let { setKeepBond(keepBond) }
+                // The number of packets of firmware data to be received by the DFU target before sending a new Packet Receipt Notification.
+                // Disabling PRNs increases upload speed but may cause failures on devices with slow flash memory.
+                packetReceiptNotificationParameter?.let {
+                    if (it > 0) {
+                        setPacketsReceiptNotificationsEnabled(true)
+                        setPacketsReceiptNotificationsValue(it)
+                    } else {
+                        setPacketsReceiptNotificationsEnabled(false)
+                    }
+                }
                 // For DFU bootloaders from SDK 15 and 16 it may be required to add a delay before sending each
                 // data packet. This delay gives the DFU target more time to prepare flash memory, causing less
                 // packets being dropped and more reliable transfer. Detection of packets being lost would cause
                 // automatic switch to PRN = 1, making the DFU very slow (but reliable).
                 prepareDataObjectDelay?.let { setPrepareDataObjectDelay(it) }
-                retries?.let { setNumberOfRetries(it) }
+                // Sets the time required by the device to reboot.
+                rebootTime?.let { setRebootTime(it) }
+                // Sets whether a new bond should be created after the DFU is complete.
+                // The old bond information will be removed before.
+                restoreBond?.let { setRestoreBond(it) }
+                numberOfRetries?.let { setNumberOfRetries(it) }
             }
             controller = starter.start(context, DfuService::class.java)
         }

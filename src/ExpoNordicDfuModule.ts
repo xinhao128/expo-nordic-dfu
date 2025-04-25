@@ -4,16 +4,23 @@ import { Platform } from 'react-native';
 
 declare class ExpoNordicDfuModule extends NativeModule<ExpoSettingsModuleEvents> {
   startAndroidDfu(
-    address: string,
-    uri: string,
-    name?: string,
+    deviceAddress: string,
+    fileUri: string,
+    deviceName?: string,
+    keepBond?: boolean,
+    numberOfRetries?: number,
+    packetReceiptNotificationParameter?: number,
     prepareDataObjectDelay?: number,
-    retries?: number,
+    rebootTime?: number,
+    restoreBond?: boolean,
   ): Promise<void>;
   abortAndroidDfu(value: string): Promise<boolean>;
   startIosDfu(
     deviceAddress: string,
     fileUri: string,
+    connectionTimeout?: number,
+    disableResume?: boolean,
+    packetReceiptNotificationParameter?: number,
     prepareDataObjectDelay?: number,
   ): Promise<void>;
   abortIosDfu(value: string): Promise<boolean>;
@@ -30,9 +37,26 @@ class CrossplatformWrapper {
 
   async startDfu(params: StartDFUParams): Promise<void> {
     if (Platform.OS === 'ios') {
-      return await this.dfuModule.startIosDfu(params.deviceAddress, params.file, params.prepareDataObjectDelay);
+      return await this.dfuModule.startIosDfu(
+        params.deviceAddress,
+        params.fileUri,
+        params.ios?.connectionTimeout,
+        params.ios?.disableResume,
+        params.packetReceiptNotificationParameter,
+        params.prepareDataObjectDelay,
+      );
     } else {
-      return await this.dfuModule.startAndroidDfu(params.deviceAddress, params.file, params.android?.deviceName, params.prepareDataObjectDelay, params.android?.retries);
+      return await this.dfuModule.startAndroidDfu(
+        params.deviceAddress,
+        params.fileUri,
+        params.android?.deviceName,
+        params.android?.keepBond,
+        params.android?.numberOfRetries,
+        params.packetReceiptNotificationParameter,
+        params.prepareDataObjectDelay,
+        params.android?.rebootTime,
+        params.android?.restoreBond,
+      );
     }
   }
 };

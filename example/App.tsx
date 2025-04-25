@@ -230,18 +230,19 @@ export default function App() {
       })
       await ExpoNordicDfu.startDfu({
         deviceAddress: peripheral.id,
-        file: firmwareFile.uri,
-        prepareDataObjectDelay: 0,
+        fileUri: firmwareFile.uri,
+        // These optional values are set to useful values for quip.
+        // Change them to your needs.
+        packetReceiptNotificationParameter: 1,
         android: {
           deviceName: peripheral.name,
-          retries: 1,
-        }
+        },
       })
     } catch (error) {
       console.error(error)
     } finally {
-      // ExpoNordicDfu.module.removeAllListeners('DFUProgress')
-      // ExpoNordicDfu.module.removeAllListeners('DFUStateChanged')
+      ExpoNordicDfu.module.removeAllListeners('DFUProgress')
+      ExpoNordicDfu.module.removeAllListeners('DFUStateChanged')
     }
   }
 

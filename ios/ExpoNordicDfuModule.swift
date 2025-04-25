@@ -27,6 +27,9 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
         AsyncFunction("startIosDfu") { (
             deviceAddress: String,
             fileUri: String,
+            connectionTimeout: Int?,
+            disableResume: Bool?,
+            packetReceiptNotificationParameter: Int?,
             prepareDataObjectDelay: Double?,
             promise: Promise
         ) in
@@ -54,6 +57,12 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
             initiator.delegate = self
             initiator.progressDelegate = self
             initiator.alternativeAdvertisingNameEnabled = true
+            initiator.connectionTimeout = TimeInterval(connectionTimeout ?? 10)
+            // By default this is set to false. This property applies only to Secure DFU.
+            disableResume.map { initiator.disableResume = $0 }
+            // The number of packets of firmware data to be received by the DFU target before sending a new Packet Receipt Notification.
+            // Disabling PRNs increases upload speed but may cause failures on devices with slow flash memory.
+            packetReceiptNotificationParameter.map { initiator.packetReceiptNotificationParameter = UInt16($0) }
             // Duration of a delay, that the service will wait before sending each data object in Secure DFU.
             // The delay will be done after a data object is created, and before any data byte is sent.
             // The default value is 0, which disables this feature for the second and following data objects, but the first one will be delayed by 0.4 sec.
@@ -117,6 +126,7 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
             "deviceAddress": deviceAddress,
             "state": "DFU_FAILED"
         ])
+        self.controller = nil
         let combinedMessage = "Error: \(error.rawValue), Error Type: \(String(describing: error)), Message: \(message)"
         self.currentPromise?.reject("\(error.rawValue)", combinedMessage)
         self.currentPromise = nil
@@ -129,10 +139,8 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
         currentSpeedBytesPerSecond: Double,
         avgSpeedBytesPerSecond: Double
     ) {
-        guard let deviceAddress = self.deviceAddress else { return }
-
         let logData: [String: String] = [
-            "deviceAddress": deviceAddress,
+            "deviceAddress": self.deviceAddress ?? "",
             "percent": String(progress),
             "speed": String(currentSpeedBytesPerSecond),
             "avgSpeed": String(avgSpeedBytesPerSecond),
@@ -141,8 +149,10 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
         ]
         Self.logger.info("DFU Progress \(logData)")
 
+//        guard let deviceAddress = self.deviceAddress else { return }
+
         sendEvent("DFUProgress", [
-            "deviceAddress": deviceAddress,
+            "deviceAddress": self.deviceAddress ?? "",
             "percent": progress,
             "speed": currentSpeedBytesPerSecond,
             "avgSpeed": avgSpeedBytesPerSecond,

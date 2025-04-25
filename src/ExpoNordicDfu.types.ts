@@ -19,11 +19,19 @@ export type DFUProgressPayload = {
 
 export type StartDFUParams = {
   deviceAddress: string;
-  file: string;
+  fileUri: string;
+  packetReceiptNotificationParameter?: number;
   prepareDataObjectDelay?: number;
   android?: {
     deviceName?: string;
-    retries?: number;
+    keepBond?: boolean;
+    numberOfRetries?: number;
+    rebootTime?: number;
+    restoreBond?: boolean;
+  }
+  ios?: {
+    connectionTimeout?: number,
+    disableResume?: boolean,
   }
 }
 
