@@ -14,5 +14,19 @@ export type DFUProgressPayload = {
     currentPart: number;
     totalParts: number;
 };
-export type DFUStartParams = {};
+export type StartDFUParams = {
+    deviceAddress: string;
+    fileUri: string;
+    packetReceiptNotificationParameter?: number;
+    prepareDataObjectDelay?: number;
+    android?: {
+        deviceName?: string;
+        keepBond?: boolean;
+        numberOfRetries?: number;
+    };
+    ios?: {
+        connectionTimeout?: number;
+        disableResume?: boolean;
+    };
+};
 //# sourceMappingURL=ExpoNordicDfu.types.d.ts.map
