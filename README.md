@@ -4,9 +4,9 @@
 
 This project was highly inspired by the original React Native project at [Pilloxa/react-native-nordic-dfu](https://github.com/Pilloxa/react-native-nordic-dfu). We continued the work so it functions with modern [Expo](http://expo.dev/) projects that use [Expo Modules](https://docs.expo.dev/modules/overview/).
 
-This module allows you to perform a Device Firmware Update (DFU) for Nordic Semiconductors on Expo React Native bridgeless projects. It wraps the official libraries at [NordicSemiconductor/Android-DFU-Library](https://github.com/NordicSemiconductor/Android-DFU-Library) and [NordicSemiconductor/IOS-DFU-Library](https://github.com/NordicSemiconductor/IOS-DFU-Library).
+This module allows you to perform a Secure Device Firmware Update (DFU) for Nordic Semiconductors on Expo React Native bridgeless projects. It wraps the official libraries at [NordicSemiconductor/Android-DFU-Library](https://github.com/NordicSemiconductor/Android-DFU-Library) and [NordicSemiconductor/IOS-DFU-Library](https://github.com/NordicSemiconductor/IOS-DFU-Library). This will not support Legacy DFU out of the box!
 
-Our intention is to maintain this code for modern Expo projects only. We will not officially support old Expo SDKs. Please keep in mind the our availability to maintain this fork is limited and is based on our project needs.
+Our intention is to maintain this code for modern Expo projects only. We will not officially support old Expo SDKs or old Nordic SDKs. Please keep in mind the our availability to maintain is limited and is based on our project needs.
 
 This project does not provide an interface for scanning/connecting devices via BLE. Check the example app for libraries that can do that.
 
@@ -86,6 +86,22 @@ Refer to the base Nordic DFU library to understand how the optional parameters w
 [IOS-DFU-Library documentation](https://nordicsemiconductor.github.io/IOS-DFU-Library/documentation/nordicdfu/dfuserviceinitiator)
 
 [Android-DFU-Library documentation](https://nordicsemiconductor.github.io/Android-DFU-Library/html/lib/dfu/no.nordicsemi.android.dfu/-dfu-service-initiator/index.html)
+
+### Example App
+
+[Example App](example)
+
+```bash
+cd example
+cp .env.example .env
+# Fill in your .env as needed
+npm install
+npx expo prebuild --clean # Run this on first setup and whenever you change native files
+# Android
+npx expo run:android --device
+# iOS
+npx expo run:ios --device
+```
 
 ## Contributing
 
