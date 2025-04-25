@@ -14,7 +14,7 @@ declare class ExpoNordicDfuModule extends NativeModule<ExpoSettingsModuleEvents>
     rebootTime?: number,
     restoreBond?: boolean,
   ): Promise<void>;
-  abortAndroidDfu(value: string): Promise<boolean>;
+  abortAndroidDfu(): Promise<boolean>;
   startIosDfu(
     deviceAddress: string,
     fileUri: string,
@@ -23,7 +23,7 @@ declare class ExpoNordicDfuModule extends NativeModule<ExpoSettingsModuleEvents>
     packetReceiptNotificationParameter?: number,
     prepareDataObjectDelay?: number,
   ): Promise<void>;
-  abortIosDfu(value: string): Promise<boolean>;
+  abortIosDfu(): Promise<boolean>;
 }
 
 const DfuModule = requireNativeModule<ExpoNordicDfuModule>('ExpoNordicDfuModule');
@@ -60,11 +60,11 @@ class CrossplatformWrapper {
     }
   }
 
-  async abortDfu(deviceAddress: string): Promise<boolean> {
+  async abortDfu(): Promise<boolean> {
     if (Platform.OS === 'ios') {
-      return await this.dfuModule.abortIosDfu(deviceAddress);
+      return await this.dfuModule.abortIosDfu();
     } else {
-      return await this.dfuModule.abortAndroidDfu(deviceAddress);
+      return await this.dfuModule.abortAndroidDfu();
     }
   }
 };

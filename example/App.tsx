@@ -246,18 +246,9 @@ export default function App() {
     }
   }
 
-  const abortDFU = async (peripheral: Peripheral, firmwareFile: FirmwareFileType) => {
+  const abortDFU = async () => {
     try {
-      await ExpoNordicDfu.startDfu({
-        deviceAddress: peripheral.id,
-        fileUri: firmwareFile.uri,
-        // These optional values are set to useful values for quip.
-        // Change them to your needs.
-        packetReceiptNotificationParameter: 1,
-        android: {
-          deviceName: peripheral.name,
-        },
-      })
+      await ExpoNordicDfu.abortDfu()
     } catch (error) {
       console.error(error)
     } finally {
@@ -329,7 +320,7 @@ export default function App() {
                   abortDFU()
                 }}
               >
-                Start DFU
+                Abort DFU
               </Button>
     )}
             {peripheral && selectedColor === SELECTION_COLORS.connected && (
