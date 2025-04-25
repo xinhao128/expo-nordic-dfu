@@ -19,10 +19,13 @@
   },
   "homepage": "https://github.com/getquip/expo-nordic-dfu#readme",
   "keywords": [
-    "react-native",
+    "android",
     "dfu",
+    "expo",
+    "expo-module",
+    "ios",
     "nordic",
-    "expo"
+    "react-native"
   ],
   "license": "MIT",
   "main": "build/index.js",
