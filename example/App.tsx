@@ -104,7 +104,7 @@ export default function App() {
     })
   }
 
-  const firmwareDisableButtons = firmwareProgress !== undefined && firmwareProgress.state !== 'DEVICE_DISCONNECTED' && firmwareProgress.state !== 'DFU_FAILED' && firmwareProgress.state !== 'DFU_COMPLETED'
+  const firmwareDisableButtons = firmwareProgress !== undefined && firmwareProgress.state !== 'DEVICE_DISCONNECTED' && firmwareProgress.state !== 'DFU_FAILED' && firmwareProgress.state !== 'DFU_COMPLETED' && firmwareProgress.state !== 'DFU_ABORTED'
 
   const backgroundColor = (selected: Peripheral) => {
     const isSelected = selected.id === peripheral?.id
@@ -248,17 +248,13 @@ export default function App() {
 
   const abortDFU = async () => {
     try {
-      const aborted = await ExpoNordicDfu.abortDfu()
-      if (aborted) {
-        console.info('DFU aborted')
-        setFirmwareProgress({ state: 'DFU_ABORTED' })
-        ExpoNordicDfu.module.removeAllListeners('DFUProgress')
-        ExpoNordicDfu.module.removeAllListeners('DFUStateChanged')
-      } else {
-        console.error('DFU abort failed!!')
-      }
+      await ExpoNordicDfu.abortDfu()
+      setFirmwareProgress({ state: 'DFU_ABORTED' })
     } catch (error) {
       console.error(error)
+    } finally {
+      ExpoNordicDfu.module.removeAllListeners('DFUProgress')
+      ExpoNordicDfu.module.removeAllListeners('DFUStateChanged')
     }
   }
 

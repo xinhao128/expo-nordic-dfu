@@ -34,14 +34,58 @@ expo.android.permissions: [
   "android.permission.FOREGROUND_SERVICE",
   "android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE",
   "android.permission.BLUETOOTH",
+  "android.permission.BLUETOOTH_SCAN", // You might need to set "neverForLocation"
   "android.permission.BLUETOOTH_ADMIN",
   "android.permission.BLUETOOTH_CONNECT"
 ]
 
 // iOS
-
+expo.ios.infoPlist: [
+  "NSBluetoothAlwaysUsageDescription": "Uses Bluetooth to connect to Bluetooth enabled device.",
+  "NSBluetoothPeripheralUsageDescription": "Uses Bluetooth to connect to Bluetooth enabled device.",
+]
 ```
 
+### Listeners
+
+The listeners work mostly the same as the original @ [Pilloxa/react-native-nordic-dfu](https://github.com/Pilloxa/react-native-nordic-dfu)
+
+- `DFUProgress`: Reports back progress and extra values like upload speed
+- `DFUStateChanged`: Reports back when major DFU flow miletones happen. It will also tell you if the DFU finished, failed or was aborted
+
+```typescript
+ExpoNordicDfu.module.addListener('DFUProgress', (progress) => {
+  console.info('DFUProgress:', progress)
+})
+ExpoNordicDfu.module.addListener('DFUStateChanged', ({ state }) => {
+  console.info('DFUStateChanged:', state)
+})
+```
+
+### DFU
+
+Starting a DFU operation is simple. Setup your listeners (see above) then call
+
+```typescript
+await ExpoNordicDfu.startDfu({
+  deviceAddress,
+  fileUri,
+  // There are many optional parameters and some are OS-specific
+  // ...,
+  // android: {
+  //   ...
+  // },
+  // ios: {
+  //   ...
+  // },
+})
+```
+
+Refer to the base Nordic DFU library to understand how the optional parameters works
+
+[IOS-DFU-Library documentation](https://nordicsemiconductor.github.io/IOS-DFU-Library/documentation/nordicdfu/dfuserviceinitiator)
+
+[Android-DFU-Library documentation](https://nordicsemiconductor.github.io/Android-DFU-Library/html/lib/dfu/no.nordicsemi.android.dfu/-dfu-service-initiator/index.html)
 
 ## Contributing
 
