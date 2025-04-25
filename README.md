@@ -8,9 +8,10 @@ This module allows you to perform a Device Firmware Update (DFU) for Nordic Semi
 
 Our intention is to maintain this code for modern Expo projects only. We will not officially support old Expo SDKs. Please keep in mind the our availability to maintain this fork is limited and is based on our project needs.
 
+This project does not provide an interface for scanning/connecting devices via BLE. Check the example app for libraries that can do that.
+
 ## Requirements
 
-- React Native project already connected to the device and in the CBCentralManager cache
 - Nordic zip firmware file
 - Android 14 or 15
 - iOS 17 or 18

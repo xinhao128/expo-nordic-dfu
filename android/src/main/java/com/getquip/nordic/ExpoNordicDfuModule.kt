@@ -53,44 +53,54 @@ class ExpoNordicDfuModule : Module() {
 
             context = requireNotNull(appContext.reactContext)
             currentPromise = promise
+            if (controller !== null) {
+                currentPromise?.reject("dfu_in_progress", "A DFU process is already running", null)
+            } else {
 
-            val starter = DfuServiceInitiator(deviceAddress).apply {
-                setZip(fileUri.toUri())
-                createDfuNotificationChannel(context)
-                // The device name is not required
-                deviceName?.let { setDeviceName(it) }
-                // Sets whether the bond information should be preserver after flashing new application.
-                keepBond?.let { setKeepBond(keepBond) }
-                // The number of packets of firmware data to be received by the DFU target before sending a new Packet Receipt Notification.
-                // Disabling PRNs increases upload speed but may cause failures on devices with slow flash memory.
-                packetReceiptNotificationParameter?.let {
-                    if (it > 0) {
-                        setPacketsReceiptNotificationsEnabled(true)
-                        setPacketsReceiptNotificationsValue(it)
-                    } else {
-                        setPacketsReceiptNotificationsEnabled(false)
+                val starter = DfuServiceInitiator(deviceAddress).apply {
+                    setZip(fileUri.toUri())
+                    createDfuNotificationChannel(context)
+                    // The device name is not required
+                    deviceName?.let { setDeviceName(it) }
+                    // Sets whether the bond information should be preserver after flashing new application.
+                    keepBond?.let { setKeepBond(keepBond) }
+                    // The number of packets of firmware data to be received by the DFU target before sending a new Packet Receipt Notification.
+                    // Disabling PRNs increases upload speed but may cause failures on devices with slow flash memory.
+                    packetReceiptNotificationParameter?.let {
+                        if (it > 0) {
+                            setPacketsReceiptNotificationsEnabled(true)
+                            setPacketsReceiptNotificationsValue(it)
+                        } else {
+                            setPacketsReceiptNotificationsEnabled(false)
+                        }
                     }
+                    // For DFU bootloaders from SDK 15 and 16 it may be required to add a delay before sending each
+                    // data packet. This delay gives the DFU target more time to prepare flash memory, causing less
+                    // packets being dropped and more reliable transfer. Detection of packets being lost would cause
+                    // automatic switch to PRN = 1, making the DFU very slow (but reliable).
+                    prepareDataObjectDelay?.let { setPrepareDataObjectDelay(it) }
+                    // Sets the time required by the device to reboot.
+                    rebootTime?.let { setRebootTime(it) }
+                    // Sets whether a new bond should be created after the DFU is complete.
+                    // The old bond information will be removed before.
+                    restoreBond?.let { setRestoreBond(it) }
+                    numberOfRetries?.let { setNumberOfRetries(it) }
                 }
-                // For DFU bootloaders from SDK 15 and 16 it may be required to add a delay before sending each
-                // data packet. This delay gives the DFU target more time to prepare flash memory, causing less
-                // packets being dropped and more reliable transfer. Detection of packets being lost would cause
-                // automatic switch to PRN = 1, making the DFU very slow (but reliable).
-                prepareDataObjectDelay?.let { setPrepareDataObjectDelay(it) }
-                // Sets the time required by the device to reboot.
-                rebootTime?.let { setRebootTime(it) }
-                // Sets whether a new bond should be created after the DFU is complete.
-                // The old bond information will be removed before.
-                restoreBond?.let { setRestoreBond(it) }
-                numberOfRetries?.let { setNumberOfRetries(it) }
+                controller = starter.start(context, DfuService::class.java)
             }
-            controller = starter.start(context, DfuService::class.java)
         }
 
         AsyncFunction("abortAndroidDfu") { promise: Promise ->
             controller?.let {
                 it.abort()
-                promise.resolve(it.isAborted)
-            } ?: run { promise.reject("10", "Controller not set, use startDfu first", null) }
+                if (it.isAborted) {
+                    promise.resolve()
+                } else {
+                    promise.reject("dfu_abort_failed", "Unable to abort DFU process", null)
+                }
+            } ?: run {
+                promise.reject("no_running_dfu", "There is no DFU process currently running", null)
+            }
         }
     }
 
@@ -149,7 +159,7 @@ class ExpoNordicDfuModule : Module() {
 
         override fun onDfuAborted(deviceAddress: String) {
             emitState("DFU_ABORTED", deviceAddress)
-            currentPromise?.reject("2", "DFU ABORTED", null)
+            currentPromise?.reject("dfu_aborted", "DFU was aborted", null)
             cleanUpNotifications()
             currentPromise = null
         }

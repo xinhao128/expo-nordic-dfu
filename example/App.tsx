@@ -104,7 +104,7 @@ export default function App() {
     })
   }
 
-  const firmwareDisableButtons = firmwareProgress !== undefined && firmwareProgress.state !== 'DEVICE_DISCONNECTED' && firmwareProgress.state !== 'DFU_FAILED'
+  const firmwareDisableButtons = firmwareProgress !== undefined && firmwareProgress.state !== 'DEVICE_DISCONNECTED' && firmwareProgress.state !== 'DFU_FAILED' && firmwareProgress.state !== 'DFU_COMPLETED'
 
   const backgroundColor = (selected: Peripheral) => {
     const isSelected = selected.id === peripheral?.id
@@ -246,6 +246,26 @@ export default function App() {
     }
   }
 
+  const abortDFU = async (peripheral: Peripheral, firmwareFile: FirmwareFileType) => {
+    try {
+      await ExpoNordicDfu.startDfu({
+        deviceAddress: peripheral.id,
+        fileUri: firmwareFile.uri,
+        // These optional values are set to useful values for quip.
+        // Change them to your needs.
+        packetReceiptNotificationParameter: 1,
+        android: {
+          deviceName: peripheral.name,
+        },
+      })
+    } catch (error) {
+      console.error(error)
+    } finally {
+      ExpoNordicDfu.module.removeAllListeners('DFUProgress')
+      ExpoNordicDfu.module.removeAllListeners('DFUStateChanged')
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container} >
       <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -302,6 +322,16 @@ export default function App() {
                 Start DFU
               </Button>
             )}
+            {firmwareDisableButtons && (
+              <Button
+                mode="contained-tonal"
+                onPress={() => {
+                  abortDFU()
+                }}
+              >
+                Start DFU
+              </Button>
+    )}
             {peripheral && selectedColor === SELECTION_COLORS.connected && (
               <Button
                 disabled={firmwareDisableButtons}

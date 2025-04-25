@@ -109,7 +109,7 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
 
         if state == .aborted {
             self.controller = nil
-            self.currentPromise?.reject("DFU_ABORTED", "DFU aborted")
+            self.currentPromise?.reject("dfu_aborted", "DFU was aborted")
             self.currentPromise = nil
         }
         if state == .completed {

@@ -59,6 +59,14 @@ class CrossplatformWrapper {
       );
     }
   }
+
+  async abortDfu(deviceAddress: string): Promise<boolean> {
+    if (Platform.OS === 'ios') {
+      return await this.dfuModule.abortIosDfu(deviceAddress);
+    } else {
+      return await this.dfuModule.abortAndroidDfu(deviceAddress);
+    }
+  }
 };
 
 export default new CrossplatformWrapper(DfuModule);
