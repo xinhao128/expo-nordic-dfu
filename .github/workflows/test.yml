@@ -28,7 +28,7 @@ jobs:
         run: |
           EMITTED=$(npx tsc --listEmittedFiles)
           echo "$EMITTED"
-          if echo "$EMITTED" | grep -q "Emitted"; then
+          if echo "$EMITTED" | grep -q "TSFILE"; then
             echo "❌ Emitted files found, please compile your TypeScript code before submitting a PR"
             exit 1
           else
