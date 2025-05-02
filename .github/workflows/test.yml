@@ -25,4 +25,12 @@ jobs:
         run: npm install
       -
         name: Type Check (Compile) TypeScript
-        run: npx tsc
+        run: |
+          EMITTED=$(npx tsc --listEmittedFiles)
+          echo "$EMITTED"
+          if echo "$EMITTED" | grep -q "Emitted"; then
+            echo "❌ Emitted files found, please compile your TypeScript code before submitting a PR"
+            exit 1
+          else
+            echo "✅No files emitted"
+          fi
