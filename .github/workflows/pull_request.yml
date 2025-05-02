@@ -1,0 +1,27 @@
+name: Pull Request
+on:
+  pull_request:
+concurrency:
+  group: pr-${{ github.ref }}
+  cancel-in-progress: true
+permissions:
+  contents: read
+jobs:
+  lint:
+    name: Lint
+    uses: ./.github/workflows/lint.yml
+    with:
+      sha: ${{ github.sha }}
+      diff_ref: ${{ github.event.pull_request.base.ref}}
+
+  test:
+    name: Test
+    uses: ./.github/workflows/test.yml
+    with:
+      sha: ${{ github.sha }}
+
+  audit:
+    name: Audit
+    uses: ./.github/workflows/audit.yml
+    with:
+      sha: ${{ github.sha }}
