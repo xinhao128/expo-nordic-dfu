@@ -5,6 +5,7 @@ declare class ExpoNordicDfuModule extends NativeModule<ExpoSettingsModuleEvents>
     abortAndroidDfu(): Promise<void>;
     startIosDfu(deviceAddress: string, fileUri: string, connectionTimeout?: number, disableResume?: boolean, packetReceiptNotificationParameter?: number, prepareDataObjectDelay?: number): Promise<void>;
     abortIosDfu(): Promise<void>;
+    a: any;
 }
 declare class CrossplatformWrapper {
     private dfuModule;
