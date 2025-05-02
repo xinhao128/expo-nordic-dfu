@@ -23,7 +23,7 @@ declare class ExpoNordicDfuModule extends NativeModule<ExpoSettingsModuleEvents>
     packetReceiptNotificationParameter?: number,
     prepareDataObjectDelay?: number
   ): Promise<void>
-  abortIosDfu(): Promise<void>a
+  abortIosDfu(): Promise<void>
 }
 
 const DfuModule = requireNativeModule<ExpoNordicDfuModule>('ExpoNordicDfuModule')
