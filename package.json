@@ -6,9 +6,14 @@
   "description": "Nordic DFU for Expo",
   "devDependencies": {
     "@types/react": "~18.3.12",
+    "eslint-config-expo": "~8.0.1",
+    "eslint-config-prettier": "^10.0.1",
+    "eslint-plugin-jest": "^28.11.0",
+    "eslint-plugin-prettier": "^5.2.3",
     "expo": "~52.0.46",
+    "expo-doctor": "^1.12.5",
     "expo-module-scripts": "^4.0.5",
-    "prettier": "^2.8.8",
+    "prettier": "^3.4.2",
     "react-native": "^0.76.9"
   },
   "expo-module": {
@@ -51,14 +56,17 @@
     "build": "expo-module build",
     "clean": "expo-module clean",
     "expo-module": "expo-module",
-    "lint": "expo-module lint",
+    "eslint:check": "eslint . --max-warnings 0",
+    "eslint:fix": "eslint . --fix",
     "open:android": "open -a \"Android Studio\" example/android",
     "open:ios": "xed example/ios",
+    "prettier:check": "prettier --config .prettierrc --check '**/*.{ts,tsx,js,jsx}'",
+    "prettier:fix": "prettier --config .prettierrc --write '**/*.{ts,tsx,js,jsx}'",
     "prepare": "expo-module prepare",
     "prepublishOnly": "expo-module prepublishOnly",
     "test": "expo-module test"
   },
   "types": "build/index.d.ts",
   "url": "https://github.com/getquip/expo-nordic-dfu",
-  "version": "0.1.0"
+  "version": "0.2.0"
 }

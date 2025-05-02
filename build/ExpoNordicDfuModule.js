@@ -14,7 +14,11 @@ class CrossplatformWrapper {
             return await this.dfuModule.startIosDfu(params.deviceAddress, params.fileUri, params.ios?.connectionTimeout, params.ios?.disableResume, params.packetReceiptNotificationParameter, params.prepareDataObjectDelay);
         }
         else {
-            return await this.dfuModule.startAndroidDfu(params.deviceAddress, params.fileUri, params.android?.deviceName, params.android?.keepBond, params.android?.numberOfRetries, params.packetReceiptNotificationParameter, params.prepareDataObjectDelay);
+            return await this.dfuModule.startAndroidDfu(params.deviceAddress, params.fileUri, params.android?.deviceName, params.android?.keepBond, params.android?.numberOfRetries, params.packetReceiptNotificationParameter, params.prepareDataObjectDelay
+            // See android/src/main/java/com/getquip/nordic/ExpoNordicDfuModule.kt
+            // params.android?.rebootTime,
+            // params.android?.restoreBond,
+            );
         }
     }
     async abortDfu() {
@@ -26,6 +30,5 @@ class CrossplatformWrapper {
         }
     }
 }
-;
 export default new CrossplatformWrapper(DfuModule);
 //# sourceMappingURL=ExpoNordicDfuModule.js.map
