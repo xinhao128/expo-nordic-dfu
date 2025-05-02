@@ -11,6 +11,22 @@ on:
 permissions:
   contents: read
 jobs:
+  actionlint:
+    name: Actionlint
+    runs-on: ubuntu-latest
+    steps:
+      -
+        uses: actions/checkout@v4
+      -
+        name: Download actionlint
+        id: get_actionlint
+        shell: bash
+        run: bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+      -
+        name: Check Workflow Files
+        shell: bash
+        run: ${{ steps.get_actionlint.outputs.executable }} -color -verbose
+
   prettier:
     name: Prettier
     runs-on: ubuntu-latest
