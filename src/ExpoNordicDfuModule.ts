@@ -1,6 +1,6 @@
-import { NativeModule, requireNativeModule } from 'expo';
-import { ExpoSettingsModuleEvents, StartDFUParams } from './ExpoNordicDfu.types';
-import { Platform } from 'react-native';
+import { NativeModule, requireNativeModule } from 'expo'
+import { ExpoSettingsModuleEvents, StartDFUParams } from './ExpoNordicDfu.types'
+import { Platform } from 'react-native'
 
 declare class ExpoNordicDfuModule extends NativeModule<ExpoSettingsModuleEvents> {
   startAndroidDfu(
@@ -12,27 +12,27 @@ declare class ExpoNordicDfuModule extends NativeModule<ExpoSettingsModuleEvents>
     packetReceiptNotificationParameter?: number,
     prepareDataObjectDelay?: number,
     rebootTime?: number,
-    restoreBond?: boolean,
-  ): Promise<void>;
-  abortAndroidDfu(): Promise<void>;
+    restoreBond?: boolean
+  ): Promise<void>
+  abortAndroidDfu(): Promise<void>
   startIosDfu(
     deviceAddress: string,
     fileUri: string,
     connectionTimeout?: number,
     disableResume?: boolean,
     packetReceiptNotificationParameter?: number,
-    prepareDataObjectDelay?: number,
-  ): Promise<void>;
-  abortIosDfu(): Promise<void>;
+    prepareDataObjectDelay?: number
+  ): Promise<void>
+  abortIosDfu(): Promise<void>
 }
 
-const DfuModule = requireNativeModule<ExpoNordicDfuModule>('ExpoNordicDfuModule');
+const DfuModule = requireNativeModule<ExpoNordicDfuModule>('ExpoNordicDfuModule')
 
 class CrossplatformWrapper {
   constructor(private dfuModule: ExpoNordicDfuModule) {}
 
   get module() {
-    return this.dfuModule;
+    return this.dfuModule
   }
 
   async startDfu(params: StartDFUParams): Promise<void> {
@@ -43,8 +43,8 @@ class CrossplatformWrapper {
         params.ios?.connectionTimeout,
         params.ios?.disableResume,
         params.packetReceiptNotificationParameter,
-        params.prepareDataObjectDelay,
-      );
+        params.prepareDataObjectDelay
+      )
     } else {
       return await this.dfuModule.startAndroidDfu(
         params.deviceAddress,
@@ -53,21 +53,21 @@ class CrossplatformWrapper {
         params.android?.keepBond,
         params.android?.numberOfRetries,
         params.packetReceiptNotificationParameter,
-        params.prepareDataObjectDelay,
+        params.prepareDataObjectDelay
         // See android/src/main/java/com/getquip/nordic/ExpoNordicDfuModule.kt
         // params.android?.rebootTime,
         // params.android?.restoreBond,
-      );
+      )
     }
   }
 
   async abortDfu(): Promise<void> {
     if (Platform.OS === 'ios') {
-      return await this.dfuModule.abortIosDfu();
+      return await this.dfuModule.abortIosDfu()
     } else {
-      return await this.dfuModule.abortAndroidDfu();
+      return await this.dfuModule.abortAndroidDfu()
     }
   }
-};
+}
 
-export default new CrossplatformWrapper(DfuModule);
+export default new CrossplatformWrapper(DfuModule)
