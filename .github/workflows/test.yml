@@ -28,6 +28,7 @@ jobs:
         run: |
           set -e
           npx tsc
+          git diff
           if ! git diff --quiet; then
             echo "❌ Emitted files found, please compile your TypeScript code before submitting a PR"
             exit 1
