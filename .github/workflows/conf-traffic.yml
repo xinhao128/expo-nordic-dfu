@@ -1,11 +1,10 @@
 name: Weekly GitHub Activity Report
-
 on:
   schedule:
     - cron: '0 9 * * 1' # Every Monday at 9:00 UTC
   workflow_dispatch:
 jobs:
-  report:
+  run:
     runs-on: ubuntu-latest
     steps:
     -
@@ -32,8 +31,8 @@ jobs:
           echo "STARS=${stars}"
           echo "VISITORS=${visitors}"
         } >> "$GITHUB_ENV"
-
-    - name: Send Slack notification
+    -
+      name: Send Slack notification
       run: |
         payload=$(jq -n \
           --arg repo "https://github.com/${{ env.GITHUB_REPOSITORY }}" \
