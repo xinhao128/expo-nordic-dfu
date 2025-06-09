@@ -49,12 +49,14 @@ jobs:
           --arg stars "$STARS" \
           --arg visitors "$VISITORS" \
           '{
-            text: "*📊 Weekly Open Source Activity Report*",
+            pretext: "*📊 Weekly Open Source Activity Report*",
+            author_name: "GitHub Actions",
+            author_link: "https://github.com/getquip/expo-nordic-dfu/actions/workflows/conf-traffic.yml",
             attachments: [
               {
                 color: "#36a64f",
                 fields: [
-                  { title: "Repository", value: $repo, short: true },
+                  { title: "Repository", value: $repo, short: false },
                   { title: "Forks", value: $forks, short: true },
                   { title: "Watchers", value: $watchers, short: true },
                   { title: "Stars", value: $stars, short: true },
