@@ -51,7 +51,7 @@ jobs:
           '{
             pretext: "*📊 Weekly Open Source Activity Report*",
             author_name: "GitHub Actions",
-            author_link: "https://github.com/getquip/expo-nordic-dfu/actions/workflows/conf-traffic.yml",
+            author_link: "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
             attachments: [
               {
                 color: "#36a64f",
