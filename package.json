@@ -68,5 +68,5 @@
   },
   "types": "build/index.d.ts",
   "url": "https://github.com/getquip/expo-nordic-dfu",
-  "version": "0.2.0"
+  "version": "1.0.0"
 }
