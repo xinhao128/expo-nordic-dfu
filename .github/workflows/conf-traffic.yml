@@ -19,7 +19,7 @@ jobs:
       name: Fetch stats
       id: stats
       env:
-        GH_TOKEN: ${{ steps.app-token }}
+        GH_TOKEN: ${{ steps.app-token.outputs.token }}
       run: |
         GH_API="/repos/${{ github.repository }}"
         TRAFFIC_API="/repos/${{ github.repository }}/traffic/views"
