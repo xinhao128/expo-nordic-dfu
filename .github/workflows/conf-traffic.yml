@@ -58,7 +58,7 @@ jobs:
                   { title: "Forks", value: $forks, short: true },
                   { title: "Watchers", value: $watchers, short: true },
                   { title: "Stars", value: $stars, short: true },
-                  { title: "Visitors (14d)", value: $count, short: true }
+                  { title: "Visitors (14d)", value: $visitors, short: true }
                 ]
               }
             ]
