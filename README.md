@@ -1,3 +1,9 @@
+Cloned the branch from getequip/expo-nordic-dfu. Intended for my personal use.
+
+Need to clone as by default the package doesn't support legacy DFUs.
+
+---
+
 # Expo Nordic DFU
 
 This project was highly inspired by the original React Native project at [Pilloxa/react-native-nordic-dfu](https://github.com/Pilloxa/react-native-nordic-dfu). We continued the work so it functions with modern [Expo](http://expo.dev/) projects that use [Expo Modules](https://docs.expo.dev/modules/overview/).
