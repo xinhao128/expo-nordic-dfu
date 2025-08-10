@@ -1,9 +1,25 @@
 import { NativeModule } from 'expo';
 import { ExpoSettingsModuleEvents, StartDFUParams } from './ExpoNordicDfu.types';
+type DfuOptions = {
+    disableResume?: boolean;
+    forceScanningForNewAddressInLegacyDfu?: boolean;
+    packetReceiptNotificationParameter?: number;
+    prepareDataObjectDelay?: number;
+};
+type IosDfuOptions = {
+    connectionTimeout?: number;
+};
+type AndroidDfuOptions = {
+    deviceName?: string;
+    keepBond?: boolean;
+    numberOfRetries?: number;
+    rebootTime?: number;
+    restoreBond?: boolean;
+};
 declare class ExpoNordicDfuModule extends NativeModule<ExpoSettingsModuleEvents> {
-    startAndroidDfu(deviceAddress: string, fileUri: string, deviceName?: string, keepBond?: boolean, numberOfRetries?: number, packetReceiptNotificationParameter?: number, prepareDataObjectDelay?: number, rebootTime?: number, restoreBond?: boolean): Promise<void>;
+    startAndroidDfu(deviceAddress: string, fileUri: string, options?: DfuOptions, androidOptions?: AndroidDfuOptions): Promise<void>;
     abortAndroidDfu(): Promise<void>;
-    startIosDfu(deviceAddress: string, fileUri: string, connectionTimeout?: number, disableResume?: boolean, packetReceiptNotificationParameter?: number, prepareDataObjectDelay?: number): Promise<void>;
+    startIosDfu(deviceAddress: string, fileUri: string, options?: DfuOptions, iosOptions?: IosDfuOptions): Promise<void>;
     abortIosDfu(): Promise<void>;
 }
 declare class CrossplatformWrapper {

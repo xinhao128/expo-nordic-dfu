@@ -11,14 +11,29 @@ class CrossplatformWrapper {
     }
     async startDfu(params) {
         if (Platform.OS === 'ios') {
-            return await this.dfuModule.startIosDfu(params.deviceAddress, params.fileUri, params.ios?.connectionTimeout, params.ios?.disableResume, params.packetReceiptNotificationParameter, params.prepareDataObjectDelay);
+            return await this.dfuModule.startIosDfu(params.deviceAddress, params.fileUri, {
+                disableResume: params.disableResume,
+                forceScanningForNewAddressInLegacyDfu: params.forceScanningForNewAddressInLegacyDfu,
+                packetReceiptNotificationParameter: params.packetReceiptNotificationParameter,
+                prepareDataObjectDelay: params.prepareDataObjectDelay,
+            }, {
+                connectionTimeout: params.ios?.connectionTimeout,
+            });
         }
         else {
-            return await this.dfuModule.startAndroidDfu(params.deviceAddress, params.fileUri, params.android?.deviceName, params.android?.keepBond, params.android?.numberOfRetries, params.packetReceiptNotificationParameter, params.prepareDataObjectDelay
-            // See android/src/main/java/com/getquip/nordic/ExpoNordicDfuModule.kt
-            // params.android?.rebootTime,
-            // params.android?.restoreBond,
-            );
+            return await this.dfuModule.startAndroidDfu(params.deviceAddress, params.fileUri, {
+                disableResume: params.disableResume,
+                forceScanningForNewAddressInLegacyDfu: params.forceScanningForNewAddressInLegacyDfu,
+                packetReceiptNotificationParameter: params.packetReceiptNotificationParameter,
+                prepareDataObjectDelay: params.prepareDataObjectDelay,
+            }, {
+                deviceName: params.android?.deviceName,
+                keepBond: params.android?.keepBond,
+                numberOfRetries: params.android?.numberOfRetries,
+                // See android/src/main/java/com/getquip/nordic/ExpoNordicDfuModule.kt
+                rebootTime: params.android?.rebootTime,
+                restoreBond: params.android?.restoreBond,
+            });
         }
     }
     async abortDfu() {

@@ -2,27 +2,34 @@ import { NativeModule, requireNativeModule } from 'expo'
 import { ExpoSettingsModuleEvents, StartDFUParams } from './ExpoNordicDfu.types'
 import { Platform } from 'react-native'
 
+type DfuOptions = {
+  disableResume?: boolean
+  forceScanningForNewAddressInLegacyDfu?: boolean
+  packetReceiptNotificationParameter?: number
+  prepareDataObjectDelay?: number
+}
+
+type IosDfuOptions = {
+  connectionTimeout?: number
+}
+
+type AndroidDfuOptions = {
+  deviceName?: string
+  keepBond?: boolean
+  numberOfRetries?: number
+  rebootTime?: number
+  restoreBond?: boolean
+}
+
 declare class ExpoNordicDfuModule extends NativeModule<ExpoSettingsModuleEvents> {
   startAndroidDfu(
     deviceAddress: string,
     fileUri: string,
-    deviceName?: string,
-    keepBond?: boolean,
-    numberOfRetries?: number,
-    packetReceiptNotificationParameter?: number,
-    prepareDataObjectDelay?: number,
-    rebootTime?: number,
-    restoreBond?: boolean
+    options?: DfuOptions,
+    androidOptions?: AndroidDfuOptions
   ): Promise<void>
   abortAndroidDfu(): Promise<void>
-  startIosDfu(
-    deviceAddress: string,
-    fileUri: string,
-    connectionTimeout?: number,
-    disableResume?: boolean,
-    packetReceiptNotificationParameter?: number,
-    prepareDataObjectDelay?: number
-  ): Promise<void>
+  startIosDfu(deviceAddress: string, fileUri: string, options?: DfuOptions, iosOptions?: IosDfuOptions): Promise<void>
   abortIosDfu(): Promise<void>
 }
 
@@ -40,23 +47,34 @@ class CrossplatformWrapper {
       return await this.dfuModule.startIosDfu(
         params.deviceAddress,
         params.fileUri,
-        params.ios?.connectionTimeout,
-        params.ios?.disableResume,
-        params.packetReceiptNotificationParameter,
-        params.prepareDataObjectDelay
+        {
+          disableResume: params.disableResume,
+          forceScanningForNewAddressInLegacyDfu: params.forceScanningForNewAddressInLegacyDfu,
+          packetReceiptNotificationParameter: params.packetReceiptNotificationParameter,
+          prepareDataObjectDelay: params.prepareDataObjectDelay,
+        },
+        {
+          connectionTimeout: params.ios?.connectionTimeout,
+        }
       )
     } else {
       return await this.dfuModule.startAndroidDfu(
         params.deviceAddress,
         params.fileUri,
-        params.android?.deviceName,
-        params.android?.keepBond,
-        params.android?.numberOfRetries,
-        params.packetReceiptNotificationParameter,
-        params.prepareDataObjectDelay
-        // See android/src/main/java/com/getquip/nordic/ExpoNordicDfuModule.kt
-        // params.android?.rebootTime,
-        // params.android?.restoreBond,
+        {
+          disableResume: params.disableResume,
+          forceScanningForNewAddressInLegacyDfu: params.forceScanningForNewAddressInLegacyDfu,
+          packetReceiptNotificationParameter: params.packetReceiptNotificationParameter,
+          prepareDataObjectDelay: params.prepareDataObjectDelay,
+        },
+        {
+          deviceName: params.android?.deviceName,
+          keepBond: params.android?.keepBond,
+          numberOfRetries: params.android?.numberOfRetries,
+          // See android/src/main/java/com/getquip/nordic/ExpoNordicDfuModule.kt
+          rebootTime: params.android?.rebootTime,
+          restoreBond: params.android?.restoreBond,
+        }
       )
     }
   }

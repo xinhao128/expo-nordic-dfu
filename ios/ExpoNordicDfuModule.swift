@@ -9,6 +9,17 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
     private var currentPromise: Promise?
     private var deviceAddress: String?
 
+    public struct DfuOptions: Record {
+        @Field var disableResume: Bool?
+        @Field var packetReceiptNotificationParameter: Int?
+        @Field var prepareDataObjectDelay: Double?
+        @Field var forceScanningForNewAddressInLegacyDfu?: Bool?
+    }
+
+    public struct IosDfuOptions: Record {
+        @Field var connectionTimeout: Int?
+    }
+
     public func definition() -> ModuleDefinition {
         Name("ExpoNordicDfuModule")
 
@@ -27,10 +38,8 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
         AsyncFunction("startIosDfu") { (
             deviceAddress: String,
             fileUri: String,
-            connectionTimeout: Int?,
-            disableResume: Bool?,
-            packetReceiptNotificationParameter: Int?,
-            prepareDataObjectDelay: Double?,
+            dfuOptions: DfuOptions?,
+            iosDfuOptions: IosDfuOptions?,
             promise: Promise
         ) in
             guard self.controller == nil else {
@@ -59,19 +68,29 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
             initiator.delegate = self
             initiator.progressDelegate = self
             initiator.alternativeAdvertisingNameEnabled = true
-            initiator.connectionTimeout = TimeInterval(connectionTimeout ?? 10)
-            // By default this is set to false. This property applies only to Secure DFU.
-            disableResume.map { initiator.disableResume = $0 }
-            // The number of packets of firmware data to be received by the DFU target before sending a new Packet Receipt Notification.
-            // Disabling PRNs increases upload speed but may cause failures on devices with slow flash memory.
-            packetReceiptNotificationParameter.map { initiator.packetReceiptNotificationParameter = UInt16($0) }
-            // Duration of a delay, that the service will wait before sending each data object in Secure DFU.
-            // The delay will be done after a data object is created, and before any data byte is sent.
-            // The default value is 0, which disables this feature for the second and following data objects, but the first one will be delayed by 0.4 sec.
-            // It has been found, that a delay of at least 0.3 sec reduces the risk of packet lose (the bootloader needs some time to prepare flash memory) on DFU bootloader from SDK 15, 16, and 17.
-            // The delay does not have to be longer than 0.4 sec, as according to performed tests, such such delay is sufficient.
-            // The recommended delay is from 0.3 to 0.4 second if your DFU bootloader is from SDK 15, 16 or 17. Older bootloaders do not need this delay.
-            prepareDataObjectDelay.map { initiator.dataObjectPreparationDelay = TimeInterval($0) }
+
+            if let opts = dfuOptions {
+                // By default this is set to false. This property applies only to Secure DFU.
+                opts.disableResume.map { initiator.disableResume = $0 }
+                // The number of packets of firmware data to be received by the DFU target before sending a new Packet Receipt Notification.
+                // Disabling PRNs increases upload speed but may cause failures on devices with slow flash memory.
+                opts.packetReceiptNotificationParameter.map { initiator.packetReceiptNotificationParameter = UInt16($0) }
+                // Duration of a delay, that the service will wait before sending each data object in Secure DFU.
+                // The delay will be done after a data object is created, and before any data byte is sent.
+                // The default value is 0, which disables this feature for the second and following data objects, but the first one will be delayed by 0.4 sec.
+                // It has been found, that a delay of at least 0.3 sec reduces the risk of packet lose (the bootloader needs some time to prepare flash memory) on DFU bootloader from SDK 15, 16, and 17.
+                // The delay does not have to be longer than 0.4 sec, as according to performed tests, such such delay is sufficient.
+                // The recommended delay is from 0.3 to 0.4 second if your DFU bootloader is from SDK 15, 16 or 17. Older bootloaders do not need this delay.
+                opts.prepareDataObjectDelay.map { initiator.dataObjectPreparationDelay = TimeInterval($0) }
+                opts.forceScanningForNewAddressInLegacyDfu.map { initiator.forceScanningForNewAddressInLegacyDfu = $0 }
+            }
+
+            if let iosOpts = iosDfuOptions {
+                initiator.connectionTimeout = TimeInterval(iosOpts.connectionTimeout ?? 10)
+            } else {
+                initiator.connectionTimeout = TimeInterval(10)
+            }
+
             self.controller = initiator.start(targetWithIdentifier: uuid)
         }
 
