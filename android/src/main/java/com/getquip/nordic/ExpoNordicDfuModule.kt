@@ -19,6 +19,21 @@ class ExpoNordicDfuModule : Module() {
     private var currentPromise: Promise? = null
     private lateinit var context: Context
 
+    data class DfuOptions(
+        var disableResume: Boolean? = null,
+        var packetReceiptNotificationParameter: Int? = null,
+        var prepareDataObjectDelay: Long? = null,
+        var forceScanningForNewAddressInLegacyDfu: Boolean? = null
+    )
+
+    data class AndroidDfuOptions(
+        var deviceName: String? = null,
+        val keepBond: Boolean? = null,
+        val numberOfRetries: Int? = null,
+        val rebootTime: Long? = null,       // Optional extra, future-proof
+        val restoreBond: Boolean? = null    // Optional extra, future-proof
+    )
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun definition() = ModuleDefinition {
         Name("ExpoNordicDfuModule")
@@ -42,17 +57,8 @@ class ExpoNordicDfuModule : Module() {
         AsyncFunction("startAndroidDfu") {
             deviceAddress: String,
             fileUri: String,
-            deviceName: String?,
-            keepBond: Boolean?,
-            numberOfRetries: Int?,
-            packetReceiptNotificationParameter: Int?,
-            prepareDataObjectDelay: Long?,
-            // ---------------------
-            // AsyncFunction only supports a max of 7 custom args + a promise!
-            // TODO: Consider passing a JSON string and then unpacking
-            // ---------------------
-            // rebootTime: Long?,
-            // restoreBond: Boolean?,
+            options: DfuOptions?,
+            androidOptions: AndroidDfuOptions?,
             promise: Promise ->
 
             currentPromise = promise
@@ -63,31 +69,39 @@ class ExpoNordicDfuModule : Module() {
                 val starter = DfuServiceInitiator(deviceAddress).apply {
                     setZip(fileUri.toUri())
                     createDfuNotificationChannel(context)
-                    // The device name is not required
-                    deviceName?.let { setDeviceName(it) }
-                    // Sets whether the bond information should be preserver after flashing new application.
-                    keepBond?.let { setKeepBond(keepBond) }
-                    // The number of packets of firmware data to be received by the DFU target before sending a new Packet Receipt Notification.
-                    // Disabling PRNs increases upload speed but may cause failures on devices with slow flash memory.
-                    packetReceiptNotificationParameter?.let {
-                        if (it > 0) {
-                            setPacketsReceiptNotificationsEnabled(true)
-                            setPacketsReceiptNotificationsValue(it)
-                        } else {
-                            setPacketsReceiptNotificationsEnabled(false)
+
+                    options?.let {
+                        it.disableResume?.let { shouldDisable -> }
+                        // The number of packets of firmware data to be received by the DFU target before sending a new Packet Receipt Notification.
+                        // Disabling PRNs increases upload speed but may cause failures on devices with slow flash memory.
+                        it.packetReceiptNotificationParameter?.let {
+                            if (it > 0) {
+                                setPacketsReceiptNotificationsEnabled(true)
+                                setPacketsReceiptNotificationsValue(it)
+                            } else {
+                                setPacketsReceiptNotificationsEnabled(false)
+                            }
                         }
+                        // For DFU bootloaders from SDK 15 and 16 it may be required to add a delay before sending each
+                        // data packet. This delay gives the DFU target more time to prepare flash memory, causing less
+                        // packets being dropped and more reliable transfer. Detection of packets being lost would cause
+                        // automatic switch to PRN = 1, making the DFU very slow (but reliable).
+                        it.prepareDataObjectDelay?.let { setPrepareDataObjectDelay(it) }
+
+                        it.forceScanningForNewAddressInLegacyDfu?.let { setForceScanningForNewAddressInLegacyDfu(it) }
                     }
-                    // For DFU bootloaders from SDK 15 and 16 it may be required to add a delay before sending each
-                    // data packet. This delay gives the DFU target more time to prepare flash memory, causing less
-                    // packets being dropped and more reliable transfer. Detection of packets being lost would cause
-                    // automatic switch to PRN = 1, making the DFU very slow (but reliable).
-                    prepareDataObjectDelay?.let { setPrepareDataObjectDelay(it) }
-                    // Sets the time required by the device to reboot.
-                    // rebootTime?.let { setRebootTime(it) }
-                    // Sets whether a new bond should be created after the DFU is complete.
-                    // The old bond information will be removed before.
-                    // restoreBond?.let { setRestoreBond(it) }
-                    numberOfRetries?.let { setNumberOfRetries(it) }
+
+                    androidOptions?.let {
+                        it.deviceName?.let { setDeviceName(it) }
+                        // Sets whether the bond information should be preserver after flashing new application.
+                        keepBond?.let { setKeepBond(it) }
+                        // Sets the time required by the device to reboot.
+                        it.rebootTime?.let { setRebootTime(it) }
+                        // Sets whether a new bond should be created after the DFU is complete.
+                        // The old bond information will be removed before.
+                        it.restoreBond?.let { setRestoreBond(it) }
+                        it.numberOfRetries?.let { setNumberOfRetries(it) }
+                    }
                 }
                 controller = starter.start(context, DfuService::class.java)
             }

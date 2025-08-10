@@ -19,14 +19,17 @@ export type StartDFUParams = {
     fileUri: string;
     packetReceiptNotificationParameter?: number;
     prepareDataObjectDelay?: number;
+    disableResume?: boolean;
+    forceScanningForNewAddressInLegacyDfu?: boolean;
     android?: {
         deviceName?: string;
         keepBond?: boolean;
         numberOfRetries?: number;
+        rebootTime?: number;
+        restoreBond?: boolean;
     };
     ios?: {
         connectionTimeout?: number;
-        disableResume?: boolean;
     };
 };
 //# sourceMappingURL=ExpoNordicDfu.types.d.ts.map

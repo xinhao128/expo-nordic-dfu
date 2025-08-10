@@ -1,20 +1,20 @@
 {
-  "author": "getquip",
+  "author": "xinhao128",
   "bugs": {
-    "url": "https://github.com/getquip/expo-nordic-dfu/issues"
+    "url": "https://github.com/xinhao128/expo-nordic-dfu/issues"
   },
   "description": "Nordic DFU for Expo",
   "devDependencies": {
-    "@types/react": "~18.3.12",
-    "eslint-config-expo": "~8.0.1",
+    "@types/react": "~19.0.10",
+    "eslint-config-expo": "~9.2.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-jest": "^28.11.0",
     "eslint-plugin-prettier": "^5.2.3",
-    "expo": "~52.0.46",
+    "expo": "^53.0.20",
     "expo-doctor": "^1.12.5",
     "expo-module-scripts": "^4.0.5",
     "prettier": "^3.4.2",
-    "react-native": "^0.76.9"
+    "react-native": "0.79.5"
   },
   "expo-module": {
     "platforms": [
@@ -22,7 +22,7 @@
       "android"
     ]
   },
-  "homepage": "https://github.com/getquip/expo-nordic-dfu#readme",
+  "homepage": "https://github.com/xinhao128/expo-nordic-dfu#readme",
   "keywords": [
     "android",
     "dfu",
@@ -34,11 +34,11 @@
   ],
   "license": "MIT",
   "main": "build/index.js",
-  "name": "@getquip/expo-nordic-dfu",
+  "name": "@xinhao128/expo-nordic-dfu",
   "peerDependencies": {
-    "expo": "^52.0.0",
-    "react": "^18.0.0",
-    "react-native": "^0.76.0"
+    "expo": "^53.0.20",
+    "react": "^19.0.0",
+    "react-native": "^0.79.5"
   },
   "publishConfig": {
     "access": "public"
@@ -51,7 +51,7 @@
       "type": "modules"
     }
   },
-  "repository": "getquip/expo-nordic-dfu",
+  "repository": "xinhao128/expo-nordic-dfu",
   "scripts": {
     "build": "expo-module build",
     "clean": "expo-module clean",
@@ -67,6 +67,6 @@
     "test": "expo-module test"
   },
   "types": "build/index.d.ts",
-  "url": "https://github.com/getquip/expo-nordic-dfu",
+  "url": "https://github.com/xinhao128/expo-nordic-dfu",
   "version": "1.0.0"
 }

@@ -22,16 +22,17 @@ export type StartDFUParams = {
   fileUri: string
   packetReceiptNotificationParameter?: number
   prepareDataObjectDelay?: number
+  disableResume?: boolean
+  forceScanningForNewAddressInLegacyDfu?: boolean
   android?: {
     deviceName?: string
     keepBond?: boolean
     numberOfRetries?: number
     // See android/src/main/java/com/getquip/nordic/ExpoNordicDfuModule.kt
-    // rebootTime?: number;
-    // restoreBond?: boolean;
+    rebootTime?: number
+    restoreBond?: boolean
   }
   ios?: {
     connectionTimeout?: number
-    disableResume?: boolean
   }
 }
