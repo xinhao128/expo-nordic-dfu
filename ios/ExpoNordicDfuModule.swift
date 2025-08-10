@@ -9,14 +9,14 @@ public class ExpoNordicDfuModule: Module, DFUProgressDelegate, DFUServiceDelegat
     private var currentPromise: Promise?
     private var deviceAddress: String?
 
-    public struct DfuOptions: Record {
+    struct DfuOptions: Record {
         @Field var disableResume: Bool?
         @Field var packetReceiptNotificationParameter: Int?
         @Field var prepareDataObjectDelay: Double?
-        @Field var forceScanningForNewAddressInLegacyDfu?: Bool?
+        @Field var forceScanningForNewAddressInLegacyDfu: Bool?
     }
 
-    public struct IosDfuOptions: Record {
+    struct IosDfuOptions: Record {
         @Field var connectionTimeout: Int?
     }
 
