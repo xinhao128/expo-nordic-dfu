@@ -71,7 +71,11 @@ class ExpoNordicDfuModule : Module() {
                     createDfuNotificationChannel(context)
 
                     options?.let {
-                        it.disableResume?.let { shouldDisable -> }
+                        it.disableResume?.let { shouldDisable -> 
+                            if (shouldDisable) {
+                                disableResume()
+                            }
+                        }
                         // The number of packets of firmware data to be received by the DFU target before sending a new Packet Receipt Notification.
                         // Disabling PRNs increases upload speed but may cause failures on devices with slow flash memory.
                         it.packetReceiptNotificationParameter?.let {
