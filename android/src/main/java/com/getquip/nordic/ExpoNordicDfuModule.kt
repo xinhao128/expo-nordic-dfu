@@ -98,7 +98,7 @@ class ExpoNordicDfuModule : Module() {
                     androidOptions?.let {
                         it.deviceName?.let { setDeviceName(it) }
                         // Sets whether the bond information should be preserver after flashing new application.
-                        keepBond?.let { setKeepBond(it) }
+                        it.keepBond?.let { setKeepBond(it) }
                         // Sets the time required by the device to reboot.
                         it.rebootTime?.let { setRebootTime(it) }
                         // Sets whether a new bond should be created after the DFU is complete.
