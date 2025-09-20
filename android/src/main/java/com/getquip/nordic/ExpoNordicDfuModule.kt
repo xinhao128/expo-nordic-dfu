@@ -10,6 +10,8 @@ import androidx.annotation.RequiresApi
 import expo.modules.kotlin.Promise
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
+import expo.modules.kotlin.records.Field
+import expo.modules.kotlin.records.Record
 import no.nordicsemi.android.dfu.*
 import androidx.core.net.toUri
 import no.nordicsemi.android.dfu.DfuServiceInitiator.createDfuNotificationChannel
@@ -19,20 +21,36 @@ class ExpoNordicDfuModule : Module() {
     private var currentPromise: Promise? = null
     private lateinit var context: Context
 
-    data class DfuOptions(
-        var disableResume: Boolean? = null,
-        var packetReceiptNotificationParameter: Int? = null,
-        var prepareDataObjectDelay: Long? = null,
-        var forceScanningForNewAddressInLegacyDfu: Boolean? = null
-    )
+    class DfuOptions: Record {
+        @Field
+        var disableResume: Boolean? = null
 
-    data class AndroidDfuOptions(
-        var deviceName: String? = null,
-        val keepBond: Boolean? = null,
-        val numberOfRetries: Int? = null,
-        val rebootTime: Long? = null,       // Optional extra, future-proof
+        @Field
+        var packetReceiptNotificationParameter: Int? = null
+
+        @Field
+        var prepareDataObjectDelay: Long? = null
+
+        @Field
+        var forceScanningForNewAddressInLegacyDfu: Boolean? = null
+    }
+
+    class AndroidDfuOptions: Record {
+        @Field
+        var deviceName: String? = null
+
+        @Field
+        val keepBond: Boolean? = null
+
+        @Field
+        val numberOfRetries: Int? = null
+
+        @Field
+        val rebootTime: Long? = null        // Optional extra, future-proof
+
+        @Field
         val restoreBond: Boolean? = null    // Optional extra, future-proof
-    )
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun definition() = ModuleDefinition {
